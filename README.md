@@ -1,36 +1,146 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Data Share Space
 
-## Getting Started
+카테고리 기반 파일 공유 플랫폼. 인증 없이 카테고리 UUID를 통해 접근하며, 파일 업로드 시 다운로드 URL을 발급합니다.
 
-First, run the development server:
+## Prerequisites
+
+- Node.js 18+
+- PostgreSQL 15+
+- npm
+
+## 설치 및 실행
 
 ```bash
+# 1. 저장소 클론
+git clone https://github.com/YOUR_USER/data-share-space.git
+cd data-share-space
+
+# 2. 의존성 설치
+npm install
+
+# 3. 환경 변수 설정
+cp .env.example .env
+# .env 파일에서 DATABASE_URL을 실제 PostgreSQL 접속 정보로 수정
+
+# 4. 데이터베이스 생성
+createdb data_share_space
+
+# 5. 마이그레이션 적용 및 Prisma Client 생성
+npx prisma migrate deploy
+npx prisma generate
+
+# 6. 업로드 디렉토리 생성
+mkdir -p uploads
+
+# 7. 개발 서버 실행
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# 또는 프로덕션 빌드
+npm run build
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 환경 변수
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| 변수 | 설명 | 기본값 |
+|------|------|--------|
+| `DATABASE_URL` | PostgreSQL 접속 문자열 | - (필수) |
+| `UPLOAD_DIR` | 파일 저장 디렉토리 | `uploads` |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## API 엔드포인트
 
-## Learn More
+### 카테고리 CRUD
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# 생성
+curl -X POST http://localhost:3000/api/categories \
+  -H "Content-Type: application/json" \
+  -d '{"title": "카테고리 이름"}'
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 목록 조회
+curl http://localhost:3000/api/categories
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# 단건 조회 (트랜잭션 포함)
+curl http://localhost:3000/api/categories/{uuid}
 
-## Deploy on Vercel
+# 수정
+curl -X PUT http://localhost:3000/api/categories/{uuid} \
+  -H "Content-Type: application/json" \
+  -d '{"title": "수정된 이름"}'
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# 삭제
+curl -X DELETE http://localhost:3000/api/categories/{uuid}
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 파일 업로드
+
+```bash
+curl -X POST http://localhost:3000/api/categories/{categoryId}/upload \
+  -F "description=설명 텍스트" \
+  -F "files=@image.png" \
+  -F "files=@document.docx"
+```
+
+응답:
+```json
+{
+  "transactionId": "uuid",
+  "downloadUrl": "/api/download/{transactionId}",
+  "fileCount": 2,
+  "completed": true
+}
+```
+
+### 다운로드
+
+```bash
+# 트랜잭션 메타데이터 + 파일 목록
+curl http://localhost:3000/api/download/{transactionId}
+
+# 개별 파일 다운로드
+curl -O http://localhost:3000/api/download/{transactionId}/files/{fileId}
+
+# 전체 파일 ZIP 다운로드
+curl -O http://localhost:3000/api/download/{transactionId}/zip
+```
+
+### 처리완료 상태 변경
+
+```bash
+curl -X PATCH http://localhost:3000/api/transactions/{transactionId}/process \
+  -H "Content-Type: application/json" \
+  -d '{"processed": true}'
+```
+
+### 트랜잭션 목록 조회
+
+```bash
+curl http://localhost:3000/api/categories/{categoryId}/transactions
+```
+
+## 웹 페이지
+
+| 경로 | 설명 |
+|------|------|
+| `/` | 카테고리 UUID 입력 페이지 |
+| `/categories/{uuid}` | 카테고리 대시보드 (CRUD) |
+| `/categories/{uuid}/transactions` | 트랜잭션 목록 |
+| `/categories/{uuid}/upload` | 파일 업로드 |
+| `/download/{transactionId}` | 다운로드 페이지 (공개) |
+
+## 데이터베이스 스키마
+
+```
+categories 1──N transactions 1──N files
+```
+
+- **categories**: id(UUID), title
+- **transactions**: id(UUID), category_id(FK), description, completed, processed, download_count
+- **files**: id(UUID), transaction_id(FK), original_name, stored_name, mime_type, size_bytes, storage_path
+
+## 프로덕션 배포 주의사항
+
+- `uploads/` 디렉토리에 쓰기 권한 필요
+- `.env` 파일의 `DATABASE_URL`을 프로덕션 DB로 변경
+- 대용량 파일 업로드 시 reverse proxy (nginx)의 `client_max_body_size` 설정 확인
+- `uploads/` 디렉토리를 영구 스토리지로 마운트 권장
