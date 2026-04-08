@@ -20,6 +20,10 @@ import {
 interface TransactionItem {
   id: string;
   description: string;
+  department: string | null;
+  name: string | null;
+  phone: string | null;
+  email: string | null;
   completed: boolean;
   processed: boolean;
   downloadCount: number;
@@ -138,6 +142,14 @@ export function TransactionList({
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
+            {(tx.department || tx.name || tx.phone || tx.email) && (
+              <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                {tx.department && <span>{tx.department}</span>}
+                {tx.name && <span>{tx.name}</span>}
+                {tx.phone && <span>{tx.phone}</span>}
+                {tx.email && <span>{tx.email}</span>}
+              </div>
+            )}
             <div className="flex gap-4 text-sm text-muted-foreground">
               <span>파일 {tx.fileCount}개</span>
               <span>다운로드 {tx.downloadCount}회</span>

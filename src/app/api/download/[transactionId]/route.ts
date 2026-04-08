@@ -49,6 +49,10 @@ export async function GET(
       transaction: {
         id: transaction.id,
         description: transaction.description,
+        department: transaction.department,
+        name: transaction.name,
+        phone: transaction.phone,
+        email: transaction.email,
         completed: transaction.completed,
         processed: transaction.processed,
         downloadCount: transaction.downloadCount + 1,

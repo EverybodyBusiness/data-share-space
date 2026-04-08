@@ -26,6 +26,10 @@ export async function POST(
 
   const formData = await request.formData();
   const description = (formData.get("description") as string) ?? "";
+  const department = (formData.get("department") as string) || null;
+  const name = (formData.get("name") as string) || null;
+  const phone = (formData.get("phone") as string) || null;
+  const email = (formData.get("email") as string) || null;
   const uploadedFiles = formData.getAll("files") as File[];
 
   if (uploadedFiles.length === 0) {
@@ -36,7 +40,7 @@ export async function POST(
   }
 
   const transaction = await prisma.transaction.create({
-    data: { categoryId, description, completed: false },
+    data: { categoryId, description, department, name, phone, email, completed: false },
   });
 
   const fileRecords = [];

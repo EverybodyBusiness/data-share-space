@@ -27,6 +27,10 @@ interface UploadResult {
 
 export function UploadForm({ categoryId }: UploadFormProps) {
   const [description, setDescription] = useState("");
+  const [department, setDepartment] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -62,6 +66,10 @@ export function UploadForm({ categoryId }: UploadFormProps) {
 
     const formData = new FormData();
     formData.append("description", description);
+    if (department) formData.append("department", department);
+    if (name) formData.append("name", name);
+    if (phone) formData.append("phone", phone);
+    if (email) formData.append("email", email);
     files.forEach((f) => formData.append("files", f));
 
     const xhr = new XMLHttpRequest();
@@ -79,6 +87,10 @@ export function UploadForm({ categoryId }: UploadFormProps) {
         setResult(data);
         toast.success("업로드가 완료되었습니다");
         setDescription("");
+        setDepartment("");
+        setName("");
+        setPhone("");
+        setEmail("");
         setFiles([]);
       } else {
         toast.error("업로드에 실패했습니다");
@@ -117,6 +129,41 @@ export function UploadForm({ categoryId }: UploadFormProps) {
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
         />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className="mb-2 block text-sm font-medium">부서</label>
+          <Input
+            placeholder="부서명 (선택)"
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="mb-2 block text-sm font-medium">이름</label>
+          <Input
+            placeholder="이름 (선택)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="mb-2 block text-sm font-medium">연락처</label>
+          <Input
+            placeholder="연락처 (선택)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="mb-2 block text-sm font-medium">이메일</label>
+          <Input
+            placeholder="이메일 (선택)"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
       </div>
 
       <div>

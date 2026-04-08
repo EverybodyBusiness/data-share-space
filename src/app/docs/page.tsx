@@ -314,6 +314,10 @@ const apiSections: { title: string; endpoints: Endpoint[] }[] = [
 
 Fields:
   description: "설명 텍스트"
+  department: "부서명" (선택)
+  name: "이름" (선택)
+  phone: "연락처" (선택)
+  email: "이메일" (선택)
   files: [file1, file2, ...]`,
         response: `{
   "transactionId": "uuid",
@@ -324,6 +328,10 @@ Fields:
 }`,
         curl: `curl -X POST http://localhost:3000/api/categories/{uuid}/upload \\
   -F "description=설명 텍스트" \\
+  -F "department=개발팀" \\
+  -F "name=홍길동" \\
+  -F "phone=010-1234-5678" \\
+  -F "email=hong@example.com" \\
   -F "files=@image.png" \\
   -F "files=@document.docx"`,
       },
@@ -427,6 +435,10 @@ const dbTables = [
       { name: "id", type: "UUID (PK)" },
       { name: "category_id", type: "UUID (FK)" },
       { name: "description", type: "TEXT" },
+      { name: "department", type: "VARCHAR(255)?" },
+      { name: "name", type: "VARCHAR(255)?" },
+      { name: "phone", type: "VARCHAR(50)?" },
+      { name: "email", type: "VARCHAR(255)?" },
       { name: "completed", type: "BOOLEAN" },
       { name: "processed", type: "BOOLEAN" },
       { name: "download_count", type: "INTEGER" },

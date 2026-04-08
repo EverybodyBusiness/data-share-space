@@ -61,6 +61,35 @@ export default async function DownloadPage({ params }: PageProps) {
             </div>
           )}
 
+          {(transaction.department || transaction.name || transaction.phone || transaction.email) && (
+            <div className="grid gap-3 rounded-lg bg-muted p-4 text-sm sm:grid-cols-2">
+              {transaction.department && (
+                <div>
+                  <span className="text-muted-foreground">부서: </span>
+                  {transaction.department}
+                </div>
+              )}
+              {transaction.name && (
+                <div>
+                  <span className="text-muted-foreground">이름: </span>
+                  {transaction.name}
+                </div>
+              )}
+              {transaction.phone && (
+                <div>
+                  <span className="text-muted-foreground">연락처: </span>
+                  {transaction.phone}
+                </div>
+              )}
+              {transaction.email && (
+                <div>
+                  <span className="text-muted-foreground">이메일: </span>
+                  {transaction.email}
+                </div>
+              )}
+            </div>
+          )}
+
           <Separator />
 
           <div>

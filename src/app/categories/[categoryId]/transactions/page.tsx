@@ -49,6 +49,10 @@ export default async function TransactionsPage({ params }: PageProps) {
         transactions={transactions.map((t) => ({
           id: t.id,
           description: t.description,
+          department: t.department,
+          name: t.name,
+          phone: t.phone,
+          email: t.email,
           completed: t.completed,
           processed: t.processed,
           downloadCount: t.downloadCount,

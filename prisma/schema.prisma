@@ -22,6 +22,10 @@ model Transaction {
   id            String   @id @default(uuid()) @db.Uuid
   categoryId    String   @map("category_id") @db.Uuid
   description   String   @default("") @db.Text
+  department    String?  @db.VarChar(255)
+  name          String?  @db.VarChar(255)
+  phone         String?  @db.VarChar(50)
+  email         String?  @db.VarChar(255)
   completed     Boolean  @default(false)
   processed     Boolean  @default(false)
   downloadCount Int      @default(0) @map("download_count")
