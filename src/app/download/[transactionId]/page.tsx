@@ -36,21 +36,19 @@ export default async function DownloadPage({ params }: PageProps) {
   }
 
   return (
-    <main className="mx-auto max-w-3xl p-6">
+    <main className="mx-auto max-w-5xl p-6">
       <Card>
         <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
+          <div>
+            <div className="flex items-center gap-3">
               <CardTitle className="text-2xl">파일 다운로드</CardTitle>
-              <p className="mt-1 text-sm text-muted-foreground">
-                카테고리: {transaction.category.title}
-              </p>
-            </div>
-            <div className="flex gap-2">
               <Badge variant={transaction.processed ? "default" : "outline"}>
                 {transaction.processed ? "처리완료" : "미처리"}
               </Badge>
             </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              카테고리: {transaction.category.title}
+            </p>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -66,24 +64,21 @@ export default async function DownloadPage({ params }: PageProps) {
           <Separator />
 
           <div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-medium">
-                파일 목록 ({transaction.files.length}개)
-              </h3>
-              <DownloadActions transactionId={transactionId} />
-            </div>
+            <h3 className="mb-4 font-medium">
+              파일 목록 ({transaction.files.length}개)
+            </h3>
 
             <div className="space-y-2">
               {transaction.files.map((file) => (
                 <div
                   key={file.id}
-                  className="flex items-center justify-between rounded-lg border p-3"
+                  className="rounded-lg border p-3"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-lg">
                       {file.mimeType.startsWith("image/") ? "🖼️" : "📄"}
                     </span>
-                    <div>
+                    <div className="flex-1">
                       <p className="text-sm font-medium">
                         {file.originalName}
                       </p>
@@ -92,16 +87,22 @@ export default async function DownloadPage({ params }: PageProps) {
                       </p>
                     </div>
                   </div>
-                  <a
-                    href={`/api/download/${transactionId}/files/${file.id}`}
-                    download
-                  >
-                    <button className="rounded-md border px-3 py-1 text-sm hover:bg-muted">
-                      다운로드
-                    </button>
-                  </a>
+                  <div className="mt-2 flex justify-end">
+                    <a
+                      href={`/api/download/${transactionId}/files/${file.id}`}
+                      download
+                    >
+                      <button className="rounded-md border px-3 py-1 text-sm hover:bg-muted">
+                        다운로드
+                      </button>
+                    </a>
+                  </div>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-4">
+              <DownloadActions transactionId={transactionId} />
             </div>
           </div>
 

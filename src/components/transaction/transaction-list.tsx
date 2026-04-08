@@ -137,16 +137,15 @@ export function TransactionList({
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="flex gap-4 text-sm text-muted-foreground">
-                <span>파일 {tx.fileCount}개</span>
-                <span>다운로드 {tx.downloadCount}회</span>
-                <span>
-                  {new Date(tx.createdAt).toLocaleDateString("ko-KR")}
-                </span>
-              </div>
-              <div className="flex gap-2">
+          <CardContent className="space-y-3">
+            <div className="flex gap-4 text-sm text-muted-foreground">
+              <span>파일 {tx.fileCount}개</span>
+              <span>다운로드 {tx.downloadCount}회</span>
+              <span>
+                {new Date(tx.createdAt).toLocaleDateString("ko-KR")}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -188,7 +187,6 @@ export function TransactionList({
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
-              </div>
             </div>
           </CardContent>
         </Card>

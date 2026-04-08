@@ -26,14 +26,14 @@ export default async function CategoryDashboard({ params }: PageProps) {
 
   return (
     <main className="mx-auto max-w-5xl p-6">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6">
         <div>
           <h1 className="text-3xl font-bold">카테고리 관리</h1>
           <p className="text-muted-foreground">
             현재 카테고리: {currentCategory.title}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="mt-4 flex gap-2">
           <Link href={`/categories/${categoryId}/transactions`}>
             <Button variant="outline">트랜잭션 목록</Button>
           </Link>

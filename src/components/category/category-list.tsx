@@ -132,8 +132,11 @@ export function CategoryList({
         {categories.map((category) => (
           <Card
             key={category.id}
-            className={
+            className={`cursor-pointer transition-shadow hover:shadow-md ${
               category.id === currentCategoryId ? "border-primary" : ""
+            }`}
+            onClick={() =>
+              router.push(`/categories/${category.id}/transactions`)
             }
           >
             <CardHeader className="pb-2">
@@ -148,7 +151,7 @@ export function CategoryList({
               <p className="mb-3 text-xs text-muted-foreground break-all">
                 {category.id}
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                 <Dialog
                   open={editId === category.id}
                   onOpenChange={(open) => {
